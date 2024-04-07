@@ -1,5 +1,5 @@
 <script>
-    import { redirect } from 'svelte-spa-router';
+    import { push } from 'svelte-spa-router';
 
     let email = "";
     let password = "";
@@ -22,14 +22,25 @@
         if (response.ok) {
             const data = await response.json();
             // Handle successful log in, set session stuff, store token, then direct to dashboad - for now home
-            redirect('/')
+            push('/654654654654')
         } else {
             console.error('Login Failed: ')
         }
     };
+    const handleTest = async (event) => {
+        const response = await fetch('http://localhost:8080/api/v1/auth/test/login', {
+            method: 'GET',
+        })
+        if (response.ok) {
+            console.info("server is happy");
+        } else {
+            console.info("fuck");
+        }
+    }
 </script>
 
 <div class="container">
+    <button class="btn form-field-outline" on:click={handleTest}>Test</button>???
     <form on:submit={handleSubmit}>
         <!-- Email input -->
         <div class="form-field-outline">
@@ -69,7 +80,7 @@
 
         <!-- Submit button -->
         <button type="submit" on:click={handleSubmit} class="btn form-field-outline">Register</button>
-        <button class="btn form-field-outline">Test</button>???
+        <button class="btn form-field-outline" on:click={handleTest}>Test</button>???
 
         <div class="divider">OR</div>
 
