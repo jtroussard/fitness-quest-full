@@ -61,6 +61,7 @@
         <a href="/" use:link>Home</a>
         <a href="/register" use:link>Register</a>
         <a href="/login" use:link>Login</a>
+        <a href="/hello" use:link>Hello</a>
       </nav>
       <h1>Fitness Quest : {$location.toString()}</h1>
     </header>
