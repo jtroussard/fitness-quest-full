@@ -11,4 +11,7 @@ public class HomeController {
     @ResponseBody
     public String home() { return "This is HOME"; }
 
+    @GetMapping("/login")
+    public String login() { return "login"; }
+
 }

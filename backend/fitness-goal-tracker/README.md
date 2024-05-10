@@ -1,5 +1,14 @@
 # Developer Notes
 
+## Commands
+
+Run a script to create table spaces for the prod environment. Not fully configured. Spaces created for User/App Data, Logs.  
+`mvn exec:exec -Dexec.executable="bash" -Dexec.args="setup_tablespaces.sh"`  
+
+maybe it is this now  
+`mvn clean install -P prod`
+
+
 ## Links
 
 ## Swagger

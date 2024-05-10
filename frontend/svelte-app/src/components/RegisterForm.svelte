@@ -1,194 +1,197 @@
 <script>
-    let username = "";
-    let email = "";
-    let password = "";
-    let confirmPassword = "";
+    import { link } from 'svelte-spa-router';
+    let username = '';
+    let email = '';
+    let password = '';
+    let confirmPassword = '';
+    let firstName = '';
+    let lastName = '';
+    let tosAccepted = false;
 
-    const handleSubmit = async (event) => {
+    async function handleSubmit(event) {
         event.preventDefault();
-        // TODO: Implement registration logic
-    };
-</script>
 
-<div class="container">
-    <form on:submit={handleSubmit}>
-        <!-- Username input -->
-        <div class="form-field-outline">
-            <label class="form-label">Username</label>
-            <input type="text" class="form-control" bind:value={username} />
-        </div>
+        const registerRequest = {
+            username,
+            email,
+            password,
+            firstName,
+            lastName,
+            tosAccepted,
+        };
 
-        <!-- Email input -->
-        <div class="form-field-outline">
-            <label class="form-label">Email address</label>
-            <input type="email" class="form-control" bind:value={email} />
-        </div>
+        try {
+            const response = await fetch('http://localhost:8080/api/v1/members/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(registerRequest)
+            });
 
-        <!-- Password input -->
-        <div class="form-field-outline">
-            <label class="form-label">Password</label>
-            <input type="password" class="form-control" bind:value={password} />
-        </div>
-
-        <!-- Confirm Password input -->
-        <div class="form-field-outline">
-            <label class="form-label">Confirm Password</label>
-            <input
-                type="password"
-                class="form-control"
-                bind:value={confirmPassword}
-            />
-        </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="btn form-field-outline">Register</button>
-
-        <div class="divider">OR</div>
-
-        <!-- Social buttons -->
-        <div class="form-field-outline">
-            <a class="btn social-btn facebook-btn" href="#!" role="button">
-                Verify/Create Account with Social Media...
-            </a>
-            <a class="btn social-btn twitter-btn" href="#!" role="button">
-                Coming Soon!
-            </a>
-        </div>
-    </form>
-    <div class="graphic-container">
-        <!-- Graphic placeholder -->
-        <!-- <img src="/static/draw2.svg" alt="Graphic" /> -->
-        <img src="/static/undraw_sign_up_n6im.svg" alt="Graphic" />
-    </div>
-</div>
-
-<style>
+            if (response.ok) {
+                const result = await response.json();
+                alert('Registration successful: ' + result.message);
+            } else {
+                const errorMsg = await response.text();
+                alert('Registration failed: ' + errorMsg);
+            }
+        } catch (error) {
+            alert('An error occurred: ' + error.message);
+        }
+    }
+  </script>
+  
+  <style>
     .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 50%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 24px;
     }
-
-    .form-container {
-        display: flex;
-        width: 100%;
-        max-width: 960px; /* Increased to double the original width */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        background: #fff;
+  
+    .left-column {
+      width: 60%;
+      position: relative;
+      background: url('/static/IMG_20151105_154559.jpg') center/cover no-repeat;
     }
-
-    form {
-        width: 48%;
-        padding: 15px;
-        display: flex;
+  
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 128, 128, 0.6);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5em;
+      text-align: center;
+    }
+  
+    .right-column {
+      width: 40%;
+      background-color: white;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  
+    h2 {
+      margin-bottom: 20px;
+    }
+  
+    label {
+      margin-bottom: 5px;
+      display: block;
+      font-weight: bold;
+    }
+  
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  
+    button {
+      background-color: #008080;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+  
+    button:hover {
+      background-color: #006666;
+    }
+  
+    .tos-checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+  
+    .tos-checkbox label {
+      margin-left: 5px;
+    }
+  
+    .login-link a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #008080;
+      text-decoration: none;
+    }
+  
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  
+    @media screen and (max-width: 768px) {
+      .container {
         flex-direction: column;
-        align-items: center; /* Align form elements centrally */
-    }
-
-    .form-field-outline {
-        width: 85%; /* Use the full width */
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Align the contents centrally */
-        margin-bottom: 20px; /* Adjusted margin for spacing */
-    }
-
-    .form-control {
+      }
+  
+      .left-column {
         width: 100%;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        margin-top: 10px;
-        margin-bottom: 30px;
-        padding: 10px;
-    }
-
-    .form-label {
+        height: 200px;
+      }
+  
+      .right-column {
         width: 100%;
-        margin-bottom: 5px;
-        /* padding-left: 15%; */
-        text-align: left;
+        padding: 20px;
+      }
+  
+      .overlay {
+        font-size: 2em;
+      }
     }
-
-    .btn {
-        width: 85%;
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        background-color: #007bff;
-        margin-bottom: 20px;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-    }
-
-    .divider {
-        display: flex;
-        align-items: center;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    .divider::before,
-    .divider::after {
-        content: "";
-        flex: 1;
-        border-bottom: 1px solid #eee;
-    }
-
-    .divider::before {
-        margin-right: 0.25rem;
-    }
-
-    .divider::after {
-        margin-left: 0.25rem;
-    }
-
-    .form-field-outline {
-        width: 85%; /* Use the full width */
-        display: flex;
-        flex-direction: column;
-        align-items: center; /* Align the contents centrally */
-        margin-bottom: 20px; /* Adjusted margin for spacing */
-    }
-
-    .social-btn {
-        display: flex;
-        width: 85%;
-        /* padding-left: 40px; */
-        padding: 10px;
-        border: none;
-        border-radius: 4px;
-        color: #fff;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .facebook-btn {
-        background-color: #3b5998;
-        background-image: url("path-to-facebook-icon.svg");
-    }
-
-    .twitter-btn {
-        background-color: #55acee;
-        background-image: url("path-to-twitter-icon.svg");
-    }
-
-    .graphic-container {
-        width: 40%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
-        order: -1;
-        margin: 5%;
-    }
-
-    .graphic-container img {
-        width: 100%; /* Ensure the image scales to fit the container */
-        height: auto;
-    }
-</style>
+  </style>
+  
+  <div class="container">
+    <div class="left-column">
+      <div class="overlay">
+        <h1>Welcome!</h1>
+      </div>
+    </div>
+    <div class="right-column">
+      <form on:submit|preventDefault={handleSubmit} class="registration-form">
+        <h2>Create Your Account</h2>
+        <label for="username">Username:</label>
+        <input type="text" id="username" bind:value={username} required>
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" bind:value={email} required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" bind:value={password} required>
+        
+        <label for="confirm-password">Confirm Password:</label>
+        <input type="password" id="confirm-password" bind:value={confirmPassword} required>
+        
+        <label for="first-name">First Name:</label>
+        <input type="text" id="first-name" bind:value={firstName} required>
+        
+        <label for="last-name">Last Name:</label>
+        <input type="text" id="last-name" bind:value={lastName} required>
+        
+        <div class="tos-checkbox">
+          <input type="checkbox" id="tos" bind:checked={tosAccepted} required>
+          <label for="tos">I have read the TOS</label>
+        </div>
+        
+        <button type="submit">Register</button>
+        
+        <div class="login-link">
+          <a href="/login" use:link>Already have an account? &rarr;</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
