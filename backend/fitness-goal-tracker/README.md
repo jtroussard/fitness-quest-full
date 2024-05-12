@@ -1,5 +1,7 @@
 # Developer Notes
 
+- log in finished - redirect to account page interpolate user info
+
 ## Commands
 
 Run a script to create table spaces for the prod environment. Not fully configured. Spaces created for User/App Data, Logs.  

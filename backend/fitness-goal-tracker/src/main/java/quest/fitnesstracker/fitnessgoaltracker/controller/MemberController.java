@@ -6,11 +6,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest;
+import quest.fitnesstracker.fitnessgoaltracker.entity.Workout;
 import quest.fitnesstracker.fitnessgoaltracker.exception.InternalRegisterationException;
 import quest.fitnesstracker.fitnessgoaltracker.exception.RegisterationException;
 import quest.fitnesstracker.fitnessgoaltracker.service.MemberService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -25,8 +27,27 @@ public class MemberController {
         this.memberService = memberService;
     }
 
+    @GetMapping("/test")
+    public String testEndpoint() {
+        return "test endpoint success";
+    }
+
+    @GetMapping("/{memberId}/account")
+    public ResponseEntity<?> memberAccount(){
+        log.info("[CONTROLLER] member account endpoint hit!");
+        try {
+            log.info("inside try catch");
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Member account information payload test!");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            log.error("[CONTROLLER] Unexpected error occurred: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+        }
+    }
+
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> registerMember(@RequestBody RegisterRequest registerRequest) {
         log.info("[CONTROLLER] register endpoint hit!");
         try {
             memberService.registerMember(registerRequest);

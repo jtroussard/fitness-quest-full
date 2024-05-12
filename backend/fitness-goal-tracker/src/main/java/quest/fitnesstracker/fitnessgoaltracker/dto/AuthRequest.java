@@ -4,15 +4,15 @@ import lombok.Getter;
 
 @Getter
 public class AuthRequest {
-    private String username;
+    private String email;
     private String password;
 
     // Do not remove
     public AuthRequest() {
     }
 
-    public AuthRequest(String username, String password) {
-        this.username = username;
+    public AuthRequest(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 

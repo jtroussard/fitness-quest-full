@@ -28,14 +28,14 @@ public class AuthService {
     }
 
     public String authenticate(AuthRequest request) {
-        Member member = memberRepository.findByUsername(request.getUsername())
+        Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        "Member not found with username: " + request.getUsername())
+                        "Member not found with email: " + request.getEmail())
                 );
         if (passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            return jwtUtil.generateToken(member.getUsername());
+            return jwtUtil.generateToken(member.getEmail());
         } else {
-            throw new BadCredentialsException("Invalid username/password supplied");
+            throw new BadCredentialsException("Invalid email/password supplied");
         }
     }
 }
