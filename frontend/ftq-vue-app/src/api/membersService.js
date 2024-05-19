@@ -1,25 +1,18 @@
-import axios from './axios'
+import axiosInstance from './axios'
 
-const API_URL = '/api/v1/members'
+const API_URL = '/api/v1/members/'
 
 export default {
   getAllMembers () {
-    return axios.get(API_URL)
+    return axiosInstance.get(API_URL)
   },
-
   getMemberById (memberId) {
-    return axios.get(API_URL + memberId)
+    return axiosInstance.get(`${API_URL}${memberId}`)
   },
-
   createMember (memberData) {
-    return axios.post(API_URL + '/register', memberData)
+    return axiosInstance.post(API_URL + 'register', memberData)
   },
-
-  updateMember (memberId, memberData) {
-    return axios.put(API_URL + memberId, memberData)
-  },
-
-  deleteMember (memberId) {
-    return axios.delete(API_URL + memberId)
+  getCurrentMember (memberId) {
+    return axiosInstance.get(`${API_URL}me/${memberId}`)
   }
 }

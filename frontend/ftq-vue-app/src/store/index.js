@@ -1,17 +1,26 @@
 import { createStore } from 'vuex'
 import membersService from '@/api/membersService'
 import authService from '@/api/authService'
+import tokenService from '@/api/tokenService'
 
 export default createStore({
   state: {
-    isAuthenticated: false,
+    isAuthenticated: tokenService.isAuthenticated(),
+    token: tokenService.getToken() || '',
     isLoading: false,
     member: null,
     errorMessage: ''
   },
   mutations: {
-    setAuthentication (state, status) {
-      state.isAuthenticated = status
+    setAuthToken (state, token) {
+      state.token = token
+      tokenService.saveToken(token)
+      state.isAuthenticated = true
+    },
+    clearAuthToken (state) {
+      state.token = ''
+      tokenService.removeToken()
+      state.isAuthenticated = false
     },
     setIsLoading (state, status) {
       state.isLoading = status
@@ -21,24 +30,20 @@ export default createStore({
     },
     setErrorMessage (state, message) {
       state.errorMessage = message
-    },
-    setToken (state, token) {
-      state.token = token
-      localStorage.setItem('token', token)
     }
   },
   actions: {
     async login ({ commit }, memberCredentials) {
+      commit('setLoading', true)
       try {
         const response = await authService.login(memberCredentials)
-        commit('setAuthentication', true)
-        commit('setMember', response.data)
+        const token = response.data
+        commit('setAuthToken', token)
         commit('setErrorMessage', '')
+        commit('setLoading', false)
       } catch (error) {
-        // handle the error here... probably need to reset state maybe some other things
-        console.error('Login Failed: ', error)
-        commit('setAuthentication', false)
-        commit('setMember', null)
+        commit('setLoading', false)
+        commit('clearAuthToken')
         commit('setErrorMessage', 'Login failed. Please check your credentials.')
       }
     },
@@ -68,6 +73,17 @@ export default createStore({
         commit('setIsLoading', false)
         commit('setErrorMessage', error.response.data)
         console.error('Failed to register new member: ', error.response.data)
+      }
+    },
+    async fetchCurrentMember ({ commit }, memberId) {
+      commit('setLoading', true)
+      try {
+        const response = await membersService.getCurrentMember(memberId)
+        commit('setMember', response.data)
+      } catch (error) {
+        commit('setErrorMessage', 'Failed to fetch member details.')
+      } finally {
+        commit('setLoading', false)
       }
     }
   },

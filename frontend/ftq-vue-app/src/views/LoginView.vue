@@ -4,17 +4,30 @@
     <form @submit.prevent="submitLogin">
       <div>
         <label for="email">Email:</label>
-        <input id="email" v-model="loginCredentials.email" type="text" placeholder="Enter your email" required>
+        <input
+          id="email"
+          v-model="loginCredentials.email"
+          type="text"
+          placeholder="Enter your email"
+          required
+        />
       </div>
       <div>
         <label for="password">Password:</label>
-        <input id="password" v-model="loginCredentials.password" type="password" placeholder="Enter your password" required>
+        <input
+          id="password"
+          v-model="loginCredentials.password"
+          type="password"
+          placeholder="Enter your password"
+          required
+        />
       </div>
       <div>
         <button type="submit">Login</button>
       </div>
     </form>
     <p v-if="errorMessage">{{ errorMessage }}</p>
+    <p v-if="authToken">We have a TOKEN! {{ authToken }}</p>
   </div>
 </template>
 
@@ -33,17 +46,29 @@ export default {
     };
   },
   computed: {
-    ...mapState(['errorMessage'])
+    ...mapState(['errorMessage', 'authToken'])
   },
   methods: {
-    ...mapActions(['login']), // Maps the Vuex 'login' action
+    ...mapActions(['login', 'setAuthToken']),
 
-    submitLogin() {
-      this.login(this.loginCredentials).then(() => {
-        if (!this.errorMessage) {
-          this.$router.push('/home'); // Redirect to home page after successful login
+    async submitLogin() {
+      try{
+        const response = await this.login(this.loginCredentials);
+        if (!response) {
+          throw new Error('No response form server')
         }
-      });
+        alert('Login Successful!')
+        const token = response.data;
+        this.setAuthToken(token);
+        localStorage.setItem('token', token);
+      } catch (error) {
+        if (error.response && error.response.data) {
+          this.errorMessage = error.response.data.message || 'Login failed! Please check your credentials.';
+        } else {
+          this.errorMessage = 'Login failed! Please check your credentials.';
+        }
+        alert('Login failed! ' + this.errorMessage)
+      }
     }
   }
 }
@@ -73,7 +98,7 @@ input[type="password"] {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #007BFF;
+  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;

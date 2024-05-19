@@ -4,7 +4,8 @@ import HomeView from '@/views/HomeView.vue'
 import AboutView from '@/views/AboutView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
-import AccountView from '@/views/AccountView.vue'
+// import AccountView from '@/views/AccountView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 const routes = [
   {
@@ -29,8 +30,8 @@ const routes = [
   },
   {
     path: '/members/:memberId',
-    name: 'AccountView',
-    component: AccountView,
+    name: 'Profile',
+    component: ProfileView,
     props: true
   }
 ]
@@ -50,6 +51,7 @@ router.beforeEach(async (to, from, next) => {
   if (isPublicPage && !isAuthenticated) {
     next({ name: 'Login' })
   } else {
+    console.log('HEY! YOU ARE AL GOOD DOOD')
     next()
   };
 })

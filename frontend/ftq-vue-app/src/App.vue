@@ -4,10 +4,24 @@
     <router-link to="/about">About</router-link> |
     <router-link to="/register">Register</router-link> |
     <router-link to="/login">Login</router-link> |
-    <router-link to="/account">Account</router-link>
+    <router-link v-if="isAuthenticated" :to="'/members/' + memberId">Profile</router-link>
+
   </nav>
   <router-view/>
 </template>
+
+<script>
+import { mapState } from 'vuex'
+
+export default {
+  computed: {
+    ...mapState(['isAuthenticated', 'member']),
+    memberId () {
+      return this.member ? this.member.id : null
+    }
+  }
+}
+</script>
 
 <style>
 #app {
