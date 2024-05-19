@@ -4,10 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest;
 import quest.fitnesstracker.fitnessgoaltracker.entity.Member;
 import quest.fitnesstracker.fitnessgoaltracker.exception.InternalRegisterationException;
-import quest.fitnesstracker.fitnessgoaltracker.exception.RegisterationException;
+import quest.fitnesstracker.fitnessgoaltracker.exception.MemberAlreadyExistsException;
 import quest.fitnesstracker.fitnessgoaltracker.repository.MemberRepository;
 
 @Slf4j
@@ -23,13 +24,10 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerMember(RegisterRequest registerRequest) throws RegisterationException, InternalRegisterationException {
-        if (memberRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
-            throw new RegisterationException("A member with this username already exists");
-        }
-
+    @Transactional
+    public void registerMember(RegisterRequest registerRequest) throws MemberAlreadyExistsException, InternalRegisterationException {
         if (memberRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new RegisterationException("A member with this email address already exists");
+            throw new MemberAlreadyExistsException("A member with this email address already exists");
         }
 
         Member newMember = new Member();

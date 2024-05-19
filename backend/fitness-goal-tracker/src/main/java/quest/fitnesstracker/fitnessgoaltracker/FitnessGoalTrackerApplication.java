@@ -6,8 +6,10 @@ import org.springframework.boot.autoconfigure.web.reactive.ReactiveWebServerFact
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import quest.fitnesstracker.fitnessgoaltracker.config.AppSecurityProperties;
 
+@EnableAspectJAutoProxy
 @SpringBootApplication(exclude = {
 		ReactiveWebServerFactoryAutoConfiguration.class,
 		WebFluxAutoConfiguration.class

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -33,12 +34,12 @@ public class Member {
     private String lastName;
 
     @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate;
+    private LocalDateTime joinDate;
 
     @Column(nullable = false)
     private boolean active;
 
     public Member() {
-        this.joinDate = LocalDate.now();
+        this.joinDate = LocalDateTime.now();
     }
 }

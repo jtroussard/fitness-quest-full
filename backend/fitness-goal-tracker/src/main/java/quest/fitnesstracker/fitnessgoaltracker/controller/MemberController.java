@@ -1,20 +1,21 @@
 package quest.fitnesstracker.fitnessgoaltracker.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest;
-import quest.fitnesstracker.fitnessgoaltracker.entity.Workout;
 import quest.fitnesstracker.fitnessgoaltracker.exception.InternalRegisterationException;
-import quest.fitnesstracker.fitnessgoaltracker.exception.RegisterationException;
+import quest.fitnesstracker.fitnessgoaltracker.exception.MemberAlreadyExistsException;
 import quest.fitnesstracker.fitnessgoaltracker.service.MemberService;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+@Validated
 @Slf4j
 @RestController
 @RequestMapping("/api/v1/members")
@@ -47,9 +48,12 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerMember(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> registerMember(@Valid @RequestBody RegisterRequest registerRequest) {
         log.info("[CONTROLLER] register endpoint hit!");
         try {
+            // Testing front end UI/UX loading state and other things
+//            Thread.sleep(10000); // 10 seconds
+
             memberService.registerMember(registerRequest);
             log.info("[CONTROLLER] Member registered!");
 
@@ -57,9 +61,9 @@ public class MemberController {
             response.put("message", "Member registered!");
 
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RegisterationException e) {
+        } catch (MemberAlreadyExistsException e) {
             log.error("[CONTROLLER] Registration exception: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request. Please try again.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A member with this email already exists.");
         } catch (InternalRegisterationException e) {
             log.error("[CONTROLLER] Internal Registration exception: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unexpected error occurred saving member.");
