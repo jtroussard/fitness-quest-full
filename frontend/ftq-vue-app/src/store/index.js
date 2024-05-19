@@ -5,6 +5,7 @@ import authService from '@/api/authService'
 export default createStore({
   state: {
     isAuthenticated: false,
+    isLoading: false,
     member: null,
     errorMessage: ''
   },
@@ -12,14 +13,14 @@ export default createStore({
     setAuthentication (state, status) {
       state.isAuthenticated = status
     },
+    setIsLoading (state, status) {
+      state.isLoading = status
+    },
     setMember (state, member) {
       state.member = member
     },
     setErrorMessage (state, message) {
       state.errorMessage = message
-    },
-    addMember (state, member) {
-      state.members.push(member)
     },
     setToken (state, token) {
       state.token = token
@@ -58,16 +59,21 @@ export default createStore({
       }
     },
     async createMember ({ commit }, memberData) {
+      commit('setIsLoading', true)
       try {
         const response = await membersService.createMember(memberData)
-        commit('setMembers', response.data)
+        commit('setIsLoading', false)
+        return response.data
       } catch (error) {
-        console.error('Failed to fetch members: ', error)
+        commit('setIsLoading', false)
+        commit('setErrorMessage', error.response.data)
+        console.error('Failed to register new member: ', error.response.data)
       }
     }
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
-    member: state => state.member
+    member: state => state.member,
+    isLoading: state => state.isLoading
   }
 })

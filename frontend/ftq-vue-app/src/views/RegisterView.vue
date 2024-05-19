@@ -23,14 +23,15 @@
         <input id="lastName" v-model="newMember.lastName" type="text" placeholder="Enter your last name" required>
       </div>
       <div>
-        <button type="submit">Register</button>
+        <button type="submit" :disabled="isLoading">Register</button>
       </div>
+      <div v-if="isLoading">Registering...</div>
     </form>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'RegisterView',
@@ -45,16 +46,23 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['isLoading', 'errorMessage'])
+  },
   methods: {
     ...mapActions(['createMember']),
 
-    submitRegistration () {
-      this.createMember(this.newMember).then(() => {
+    async submitRegistration () {
+      try {
+        const response = await this.createMember(this.newMember)
+        if (!response) {
+          throw new Error('No response from server')
+        }
         alert('Registration successful!')
-        this.$router.push('/login') // Redirect to login page or somewhere else
-      }).catch(error => {
-        alert('Registration failed! ' + error.message)
-      })
+        this.$router.push('/login')
+      } catch (error) {
+        alert('Registration failed! ' + this.errorMessage)
+      }
     }
   }
 }
