@@ -2,6 +2,8 @@ package quest.fitnesstracker.fitnessgoaltracker.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +26,14 @@ public class AuthController {
     }
 
     @PostMapping("/authenticate")
-    public String createAuthenticationToken(@RequestBody AuthRequest authRequest) throws NoSuchAlgorithmException {
-        return authService.authenticate(authRequest);
+    public ResponseEntity createAuthenticationToken(@RequestBody AuthRequest authRequest) throws NoSuchAlgorithmException {
+        log.info("[CONTROLLER] authenticate endpoint hit!");
+        try {
+            String responseBodyMaybe = authService.authenticate(authRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(responseBodyMaybe);
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+        }
     }
 }
 

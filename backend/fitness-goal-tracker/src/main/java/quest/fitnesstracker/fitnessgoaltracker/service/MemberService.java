@@ -11,6 +11,9 @@ import quest.fitnesstracker.fitnessgoaltracker.exception.InternalRegisterationEx
 import quest.fitnesstracker.fitnessgoaltracker.exception.MemberAlreadyExistsException;
 import quest.fitnesstracker.fitnessgoaltracker.repository.MemberRepository;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @Slf4j
 @Service
 public class MemberService {
@@ -22,6 +25,14 @@ public class MemberService {
     public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Optional<Member> findMemberByIdAndEmail(Long id, String email) {
+        return memberRepository.findByIdAndEmail(id, email);
+    }
+
+    public Optional<Member> findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email);
     }
 
     @Transactional

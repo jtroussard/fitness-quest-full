@@ -33,7 +33,8 @@ public class AuthService {
                         "Member not found with email: " + request.getEmail())
                 );
         if (passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            return jwtUtil.generateToken(member.getEmail());
+            log.info("[SERVICE] sending token!");
+            return jwtUtil.generateToken(member);
         } else {
             throw new BadCredentialsException("Invalid email/password supplied");
         }

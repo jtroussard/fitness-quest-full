@@ -5,15 +5,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest;
+import quest.fitnesstracker.fitnessgoaltracker.entity.Member;
 import quest.fitnesstracker.fitnessgoaltracker.exception.InternalRegisterationException;
 import quest.fitnesstracker.fitnessgoaltracker.exception.MemberAlreadyExistsException;
+import quest.fitnesstracker.fitnessgoaltracker.service.CustomUserDetailsService;
 import quest.fitnesstracker.fitnessgoaltracker.service.MemberService;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Validated
 @Slf4j
@@ -33,17 +39,30 @@ public class MemberController {
         return "test endpoint success";
     }
 
-    @GetMapping("/{memberId}/account")
-    public ResponseEntity<?> memberAccount(){
+    // For auth testing
+    @GetMapping("/me/{id}")
+    public ResponseEntity<Member> getCurrentMember(@PathVariable Long id, Authentication authentication) {
+        String email = authentication.getName();
+        Optional<Member> member = memberService.findMemberByIdAndEmail(id, email);
+        if (member.isPresent()) {
+            return ResponseEntity.ok(member.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+    }
+
+    @GetMapping("/account")
+    public ResponseEntity<?> memberAccount(Authentication authentication){
         log.info("[CONTROLLER] member account endpoint hit!");
-        try {
-            log.info("inside try catch");
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Member account information payload test!");
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            log.error("[CONTROLLER] Unexpected error occurred: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred");
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();
+        log.info(" Here is the email " + email + " and here is the user details var " + userDetails);
+
+        Optional<Member> member = memberService.findMemberByEmail(email);
+        if (member.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(member.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
         }
     }
 

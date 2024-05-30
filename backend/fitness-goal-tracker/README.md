@@ -3,6 +3,8 @@
 - reg looks good, login almost there... have to undo jwt claim with id i think because when we land on account page the member get endpoint is unauthorized, backend says unexpected claims 
 - registration phase 1 complete
 - move on to login/authentication/token verification features
+- got login to work, now expanding token/authentication throuigh the router
+  - login creates token, stores in client, but message is failure and all the profile page stuff fails.
 
 ## TODOS
 
