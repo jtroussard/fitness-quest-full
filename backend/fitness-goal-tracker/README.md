@@ -1,11 +1,13 @@
 # Developer Notes
 
+- reg looks good, login almost there... have to undo jwt claim with id i think because when we land on account page the member get endpoint is unauthorized, backend says unexpected claims 
 - registration phase 1 complete
 - move on to login/authentication/token verification features
 
 ## TODOS
 
 ### Registration/Member Service
+- refactor to use veux store for token
 - email verification after registration success
 - registration via external api (resource provider)
 - verify rate limiter and aspect
@@ -20,6 +22,21 @@
 - adds migration goal to pom
 - adds rate limiter/aspect for registration endpoint
 - adds Transactional/atomization settings for registration endpoint
+- pass a better error message then this happens: (password too short)
+```bash
+2024-05-29T18:03:54.530-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.s.security.web.FilterChainProxy        : Secured POST /api/v1/members/register
+2024-05-29T18:03:54.531-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : POST "/api/v1/members/register", parameters={}
+2024-05-29T18:03:54.532-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped to quest.fitnesstracker.fitnessgoaltracker.controller.MemberController#registerMember(RegisterRequest)
+2024-05-29T18:03:54.532-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.j.s.OpenEntityManagerInViewInterceptor : Opening JPA EntityManager in OpenEntityManagerInViewInterceptor
+2024-05-29T18:03:54.567-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] m.m.a.RequestResponseBodyMethodProcessor : Read "application/json;charset=UTF-8" to [quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest@27244ca4]
+2024-05-29T18:03:54.589-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Using @ExceptionHandler quest.fitnesstracker.fitnessgoaltracker.controller.MemberController#handleGlobalExceptions(Exception)
+2024-05-29T18:03:54.592-04:00 ERROR 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] q.f.f.controller.MemberController        : Unhandled exception: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<?> quest.fitnesstracker.fitnessgoaltracker.controller.MemberController.registerMember(quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest) with 2 errors: [Field error in object 'registerRequest' on field 'password': rejected value [bud]; codes [Size.registerRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.password,password]; arguments []; default message [password],2147483647,6]; default message [Password must be at least 6 characters long]] [Field error in object 'registerRequest' on field 'username': rejected value [bud]; codes [Size.registerRequest.username,Size.username,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.username,username]; arguments []; default message [username],20,4]; default message [Username must be between 4 and 20 characters]] 
+2024-05-29T18:03:54.595-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Using 'application/json', given [application/json, text/plain, */*] and supported [text/plain, */*, application/json, application/*+json]
+2024-05-29T18:03:54.596-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.s.w.s.m.m.a.HttpEntityMethodProcessor  : Writing ["An unexpected error occurred"]
+2024-05-29T18:03:54.597-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] .m.m.a.ExceptionHandlerExceptionResolver : Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<?> quest.fitnesstracker.fitnessgoaltracker.controller.MemberController.registerMember(quest.fitnesstracker.fitnessgoaltracker.dto.RegisterRequest) with 2 errors: [Field error in object 'registerRequest' on field 'password': rejected value [bud]; codes [Size.registerRequest.password,Size.password,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.password,password]; arguments []; default message [password],2147483647,6]; default message [Password must be at least 6 characters long]] [Field error in object 'registerRequest' on field 'username': rejected value [bud]; codes [Size.registerRequest.username,Size.username,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [registerRequest.username,username]; arguments []; default message [username],20,4]; default message [Username must be between 4 and 20 characters]] ]
+2024-05-29T18:03:54.597-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.j.s.OpenEntityManagerInViewInterceptor : Closing JPA EntityManager in OpenEntityManagerInViewInterceptor
+2024-05-29T18:03:54.597-04:00 DEBUG 57403 --- [fitness-goal-tracker] [nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed 500 INTERNAL_SERVER_ERROR
+```
 
 ### Vue Application
 - adds isLoading state value

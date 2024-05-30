@@ -2,7 +2,7 @@
 import axios from 'axios'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8080/', // Backend URL
+  baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:8080/', // Use environment variable or default to localhost
   headers: {
     'Content-Type': 'application/json'
   }
@@ -11,7 +11,6 @@ const axiosInstance = axios.create({
 // Request interceptor for API calls
 axiosInstance.interceptors.request.use(
   config => {
-    // Assuming token is stored in localStorage; adjust accordingly if different
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -19,7 +18,6 @@ axiosInstance.interceptors.request.use(
     return config
   },
   error => {
-    // Do something with request error
     return Promise.reject(error)
   }
 )
@@ -27,15 +25,14 @@ axiosInstance.interceptors.request.use(
 // Response interceptor for API calls
 axiosInstance.interceptors.response.use(
   response => {
-    // Any status code that lie within the range of 2xx cause this function to trigger
     return response
   },
   error => {
-    // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
     if (error.response && error.response.status === 401) {
-      // Handle 401 errors if needed, such as redirecting to login or refreshing tokens
-      // e.g., redirect to login or clear local storage
+      // Handle 401 errors: Redirect to login or clear storage, etc.
+      // For example, we could redirect to the login page:
+      localStorage.removeItem('token') // Clear token from local storage
+      window.location.href = '/login' // Redirect to login page
     }
     return Promise.reject(error)
   }

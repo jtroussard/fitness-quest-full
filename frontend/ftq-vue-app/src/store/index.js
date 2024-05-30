@@ -75,10 +75,10 @@ export default createStore({
         console.error('Failed to register new member: ', error.response.data)
       }
     },
-    async fetchCurrentMember ({ commit }, memberId) {
+    async fetchCurrentMember ({ commit }) {
       commit('setLoading', true)
       try {
-        const response = await membersService.getCurrentMember(memberId)
+        const response = await membersService.getCurrentMember()
         commit('setMember', response.data)
       } catch (error) {
         commit('setErrorMessage', 'Failed to fetch member details.')

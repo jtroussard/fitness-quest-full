@@ -6,6 +6,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 // import AccountView from '@/views/AccountView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import AccountView from '@/views/AccountView.vue'
 
 const routes = [
   {
@@ -33,6 +34,11 @@ const routes = [
     name: 'Profile',
     component: ProfileView,
     props: true
+  },
+  {
+    path: '/account',
+    name: 'AccountView',
+    component: AccountView
   }
 ]
 

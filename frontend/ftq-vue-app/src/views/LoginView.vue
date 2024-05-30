@@ -33,7 +33,8 @@
 
 <script>
 /* eslint-disable */
-import { mapActions, mapState } from 'vuex';
+import authService from '@/api/authService'; // Import the authentication service
+import { jwtDecode } from "jwt-decode";
 
 export default {
   name: 'LoginView',
@@ -42,37 +43,47 @@ export default {
       loginCredentials: {
         email: '',
         password: ''
-      }
+      },
+      authToken: null // Holds the authentication token if login is successful
     };
   },
-  computed: {
-    ...mapState(['errorMessage', 'authToken'])
-  },
   methods: {
-    ...mapActions(['login', 'setAuthToken']),
-
     async submitLogin() {
-      try{
-        const response = await this.login(this.loginCredentials);
+      try {
+        console.log('inside the try')
+        const response = await authService.login(this.loginCredentials);
+        console.log(`we have the response ${response.data}`)
         if (!response) {
-          throw new Error('No response form server')
+          throw new Error('No response from server');
         }
-        alert('Login Successful!')
+        alert('Login Successful!');
+        console.log('passed the HAPPY alert')
         const token = response.data;
-        this.setAuthToken(token);
-        localStorage.setItem('token', token);
+        this.authToken = token;
+        localStorage.setItem('token', token); // Store the token in localStorage
+
+        console.log('TOKEN   ' + token)
+        const decodedToken = jwtDecode(token);
+        const memeberId = decodedToken.id;
+        console.log('set the token in local storage and righ tbefore the redirect' + '  TOKEN : ' + token + ' ' + JSON.stringify(response.data) )
+
+        // Redirec to to account page
+        this.$router.push({ name: 'AccountView'})
+        console.log('after the redirect')
+        // TODO need to fix this catch, be more specific with the error identification before overriding the message with bad credentials
       } catch (error) {
-        if (error.response && error.response.data) {
-          this.errorMessage = error.response.data.message || 'Login failed! Please check your credentials.';
-        } else {
-          this.errorMessage = 'Login failed! Please check your credentials.';
-        }
-        alert('Login failed! ' + this.errorMessage)
+        console.log(`inside the CATCH ${error}`)
+        const errorMsg = error.response && error.response.data ? error.response.data.message : 'Login failed! Please check your credentials.';
+        this.$error.show(errorMsg); // Use the global error handler to show the error message
+        console.log(JSON.stringify(error));
+        alert('Login failed! ' + errorMsg);
+        console.log('END OF ERROR CATCH')
       }
     }
   }
-}
+};
 </script>
+
 
 <style>
 .login-container {
