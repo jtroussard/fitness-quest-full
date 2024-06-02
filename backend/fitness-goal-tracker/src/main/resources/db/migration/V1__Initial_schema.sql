@@ -1,0 +1,16 @@
+CREATE TABLE member (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    join_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    active BOOLEAN NOT NULL
+);
+
+CREATE TABLE workouts (
+    id BIGSERIAL PRIMARY KEY,
+    type VARCHAR(255),
+    date DATE
+);
