@@ -1,5 +1,7 @@
 # Developer Notes
 
+- improves error message handling, now move on to finishing login, looks like login validation checks work fine but the state needs to update, and match with springboot security
+- messed up reg by accident, fixed and cleaned up some.
 - reg looks good, login almost there... have to undo jwt claim with id i think because when we land on account page the member get endpoint is unauthorized, backend says unexpected claims 
 - registration phase 1 complete
 - move on to login/authentication/token verification features
