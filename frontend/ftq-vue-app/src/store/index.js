@@ -8,7 +8,6 @@ export default createStore({
     isAuthenticated: tokenService.isAuthenticated(),
     token: tokenService.getToken() || '',
     isLoading: false,
-    member: null,
     errorMessage: ''
   },
   mutations: {
@@ -24,9 +23,6 @@ export default createStore({
     },
     setIsLoading (state, status) {
       state.isLoading = status
-    },
-    setMember (state, member) {
-      state.member = member
     },
     setErrorMessage (state, message) {
       state.errorMessage = message
@@ -47,34 +43,6 @@ export default createStore({
         commit('setErrorMessage', 'Login failed. Please check your credentials.')
       }
     },
-    async fetchAllMembers ({ commit }) {
-      try {
-        const response = await membersService.getAllMembers()
-        commit('setMembers', response.data)
-      } catch (error) {
-        console.error('Failed to fetch members: ', error)
-      }
-    },
-    async fetchMemberById ({ commit }, memberId) {
-      try {
-        const response = await membersService.getMemberById(memberId)
-        commit('setMembers', response.data)
-      } catch (error) {
-        console.error('Failed to fetch members: ', error)
-      }
-    },
-    async createMember ({ commit }, memberData) {
-      commit('setIsLoading', true)
-      try {
-        const response = await membersService.createMember(memberData)
-        commit('setIsLoading', false)
-        return response.data
-      } catch (error) {
-        commit('setIsLoading', false)
-        commit('setErrorMessage', error.response.data)
-        console.error('Failed to register new member: ', error.response.data)
-      }
-    },
     async fetchCurrentMember ({ commit }) {
       commit('setLoading', true)
       try {
@@ -89,7 +57,6 @@ export default createStore({
   },
   getters: {
     isAuthenticated: state => state.isAuthenticated,
-    member: state => state.member,
     isLoading: state => state.isLoading
   }
 })

@@ -31,7 +31,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import membersService from '@/api/membersService'
 
 export default {
   name: 'RegisterView',
@@ -50,18 +51,14 @@ export default {
     ...mapState(['isLoading', 'errorMessage'])
   },
   methods: {
-    ...mapActions(['createMember']),
-
     async submitRegistration () {
       try {
-        const response = await this.createMember(this.newMember)
-        if (!response) {
-          throw new Error('No response from server')
-        }
+        const response = await membersService.registerNewMember(this.newMember)
+        console.log(response.data.message)
         alert('Registration successful!')
         this.$router.push('/login')
       } catch (error) {
-        alert('Registration failed! ' + this.errorMessage)
+        alert('Registration failed! ' + this.error)
       }
     }
   }
